@@ -88,7 +88,22 @@ function loadScript(url, callback){
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 此函数接收两个参数：JavaScript 文件的 URL，和一个当 JavaScript 接收完成时触发的回调函数。属性检查用于决定监视哪种事件。最后一步，设置 src 属性，并将<script>元素添加至页面。此 loadScript() 函数使用方法如下：
+  
 loadScript()函数使用方法
+  
 loadScript("script1.js", function(){
     alert("File is loaded!");
 });
+
+通过 loadScript()函数加载多个 JavaScript 脚本
+
+loadScript("script1.js", function(){
+    loadScript("script2.js", function(){
+        loadScript("script3.js", function(){
+            alert("All files are loaded!");
+        });
+    });
+});
+
+此代码等待 script1.js 可用之后才开始加载 script2.js，等 script2.js 可用之后才开始加载 script3.js。虽然此方法可行，但如果要下载和执行的文件很多，还是有些麻烦。如果多个文件的次序十分重要，更好的办法是将这些文件按照正确的次序连接成一个文件。独立文件可以一次性下载所有代码（由于这是异步进行的，使用一个大文件并没有什么损失）。
+
