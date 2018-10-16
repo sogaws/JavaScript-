@@ -25,3 +25,70 @@ Defer 属性指明本元素所含的脚本不会修改 DOM，因此代码能安�
 async。它的作用和 defer 一样，能够异步地加载和执行脚本，不因为加载脚本而阻塞页面的加载。但是有一点需要注意，在有 async 的情况下，JavaScript 脚本一旦下载好了就会执行，所以很有可能不是按照原本的顺序来执行的。如果 JavaScript 脚本前后有依赖性，使用 async 就很有可能出现错误。
 
 5、动态脚本元素
+
+通过标准 DOM 函数创建<script>元素
+var script = document.createElement ("script");
+   script.type = "text/javascript";
+   script.src = "script1.js";
+   document.getElementsByTagName("head")[0].appendChild(script);
+  
+  
+通过监听 onload 事件加载 JavaScript 脚本
+var script = document.createElement ("script")
+script.type = "text/javascript";
+//Firefox, Opera, Chrome, Safari 3+
+script.onload = function(){
+    alert("Script loaded!");
+};
+script.src = "script1.js";
+document.getElementsByTagName("head")[0].appendChild(script);
+
+
+通过检查 readyState 状态加载 JavaScript 脚本
+var script = document.createElement("script")
+script.type = "text/javascript";
+ 
+//Internet Explorer
+script.onreadystatechange = function(){
+     if (script.readyState == "loaded" || script.readyState == "complete"){
+           script.onreadystatechange = null;
+           alert("Script loaded.");
+     }
+};
+ 
+script.src = "script1.js";
+document.getElementsByTagName("head")[0].appendChild(script);
+
+readyState 有五种取值：
+“uninitialized”：默认状态
+“loading”：下载开始
+“loaded”：下载完成
+“interactive”：下载完成但尚不可用
+“complete”：所有数据已经准备好
+有时<script>元素会得到“loader”却从不出现“complete”，但另外一些情况下出现“complete”而用不到“loaded”。最安全的办法就是在 readystatechange 事件中检查这两种状态，并且当其中一种状态出现时，删除 readystatechange 事件句柄（保证事件不会被处理两次）。
+
+
+通过函数进行封装
+function loadScript(url, callback){
+    var script = document.createElement ("script")
+    script.type = "text/javascript";
+    if (script.readyState){ //IE
+        script.onreadystatechange = function(){
+            if (script.readyState == "loaded" || script.readyState == "complete"){
+                script.onreadystatechange = null;
+                callback();
+            }
+        };
+    } else { //Others
+        script.onload = function(){
+            callback();
+        };
+    }
+    script.src = url;
+    document.getElementsByTagName("head")[0].appendChild(script);
+}
+此函数接收两个参数：JavaScript 文件的 URL，和一个当 JavaScript 接收完成时触发的回调函数。属性检查用于决定监视哪种事件。最后一步，设置 src 属性，并将<script>元素添加至页面。此 loadScript() 函数使用方法如下：
+loadScript()函数使用方法
+loadScript("script1.js", function(){
+    alert("File is loaded!");
+});
