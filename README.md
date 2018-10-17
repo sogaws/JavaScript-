@@ -112,7 +112,7 @@ loadScript("script1.js", function(){
 
 6、使用 XMLHttpRequest(XHR)对象
 
-此技术首先创建一个 XHR 对象，然后下载 JavaScript 文件，接着用一个动态 <script> 元素将 JavaScript 代码注入页面。清单 12 是一个简单的例子：
+此技术首先创建一个 XHR 对象，然后下载 JavaScript 文件，接着用一个动态 <script> 元素将 JavaScript 代码注入页面。
 
 通过 XHR 对象加载 JavaScript 脚本
 
@@ -138,17 +138,10 @@ xhr.send(null);
 
 总结
 减少 JavaScript 对性能的影响有以下几种方法：
-
 将所有的<script>标签放到页面底部，也就是</body>闭合标签之前，这能确保在脚本执行前页面已经完成了渲染。
-
 尽可能地合并脚本。页面中的<script>标签越少，加载也就越快，响应也越迅速。无论是外链脚本还是内嵌脚本都是如此。
-  
 采用无阻塞下载 JavaScript 脚本的方法：
-
 使用<script>标签的 defer 属性（仅适用于 IE 和 Firefox 3.5 以上版本）；
-  
-使用动态创建的<script>元素来下载并执行代码；
-  
+使用动态创建的<script>元素来下载并执行代码； 
 使用 XHR 对象下载 JavaScript 代码并注入页面中。
-
 通过以上策略，可以在很大程度上提高那些需要使用大量 JavaScript 的 Web 网站和应用的实际性能。
