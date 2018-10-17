@@ -27,6 +27,7 @@ async。它的作用和 defer 一样，能够异步地加载和执行脚本，�
 5、动态脚本元素
 
 通过标准 DOM 函数创建<script>元素
+  
 var script = document.createElement ("script");
    script.type = "text/javascript";
    script.src = "script1.js";
@@ -34,6 +35,7 @@ var script = document.createElement ("script");
   
   
 通过监听 onload 事件加载 JavaScript 脚本
+
 var script = document.createElement ("script")
 script.type = "text/javascript";
 //Firefox, Opera, Chrome, Safari 3+
@@ -45,6 +47,7 @@ document.getElementsByTagName("head")[0].appendChild(script);
 
 
 通过检查 readyState 状态加载 JavaScript 脚本
+
 var script = document.createElement("script")
 script.type = "text/javascript";
  
