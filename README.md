@@ -110,3 +110,45 @@ loadScript("script1.js", function(){
 
 此代码等待 script1.js 可用之后才开始加载 script2.js，等 script2.js 可用之后才开始加载 script3.js。虽然此方法可行，但如果要下载和执行的文件很多，还是有些麻烦。如果多个文件的次序十分重要，更好的办法是将这些文件按照正确的次序连接成一个文件。独立文件可以一次性下载所有代码（由于这是异步进行的，使用一个大文件并没有什么损失）。
 
+6、使用 XMLHttpRequest(XHR)对象
+
+此技术首先创建一个 XHR 对象，然后下载 JavaScript 文件，接着用一个动态 <script> 元素将 JavaScript 代码注入页面。清单 12 是一个简单的例子：
+
+通过 XHR 对象加载 JavaScript 脚本
+
+var xhr = new XMLHttpRequest();
+xhr.open("get", "script1.js", true);
+xhr.onreadystatechange = function(){
+    if (xhr.readyState == 4){
+        if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304){
+            var script = document.createElement ("script");
+            script.type = "text/javascript";
+            script.text = xhr.responseText;
+            document.body.appendChild(script);
+        }
+    }
+};
+xhr.send(null);
+
+此代码向服务器发送一个获取 script1.js 文件的 GET 请求。onreadystatechange 事件处理函数检查 readyState 是不是 4，然后检查 HTTP 状态码是不是有效（2XX 表示有效的回应，304 表示一个缓存响应）。如果收到了一个有效的响应，那么就创建一个新的<script>元素，将它的文本属性设置为从服务器接收到的 responseText 字符串。这样做实际上会创建一个带有内联代码的<script>元素。一旦新<script>元素被添加到文档，代码将被执行，并准备使用。
+
+这种方法的主要优点是，您可以下载不立即执行的 JavaScript 代码。由于代码返回在<script>标签之外（换句话说不受<script>标签约束），它下载后不会自动执行，这使得您可以推迟执行，直到一切都准备好了。另一个优点是，同样的代码在所有现代浏览器中都不会引发异常。
+
+此方法最主要的限制是：JavaScript 文件必须与页面放置在同一个域内，不能从 CDN 下载（CDN 指"内容投递网络（Content Delivery Network）"，所以大型网页通常不采用 XHR 脚本注入技术。
+
+总结
+减少 JavaScript 对性能的影响有以下几种方法：
+
+将所有的<script>标签放到页面底部，也就是</body>闭合标签之前，这能确保在脚本执行前页面已经完成了渲染。
+
+尽可能地合并脚本。页面中的<script>标签越少，加载也就越快，响应也越迅速。无论是外链脚本还是内嵌脚本都是如此。
+  
+采用无阻塞下载 JavaScript 脚本的方法：
+
+使用<script>标签的 defer 属性（仅适用于 IE 和 Firefox 3.5 以上版本）；
+  
+使用动态创建的<script>元素来下载并执行代码；
+  
+使用 XHR 对象下载 JavaScript 代码并注入页面中。
+
+通过以上策略，可以在很大程度上提高那些需要使用大量 JavaScript 的 Web 网站和应用的实际性能。
